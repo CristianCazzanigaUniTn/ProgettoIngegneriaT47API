@@ -35,7 +35,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${PORT}`
+                url: `https://eventlyapi.onrender.com`
             },
         ],
         components: {
