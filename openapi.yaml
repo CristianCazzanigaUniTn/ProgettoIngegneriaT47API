@@ -1,0 +1,2330 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Documentation",
+    "version": "1.0.0",
+    "description": "Documentazione API generata automaticamente con swagger-jsdoc.",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Localhost server"
+    }
+  ],
+  "paths": {
+    "/api/v1/authentications": {
+      "post": {
+        "summary": "Authenticate user and return a token",
+        "description": "Authenticates a user by username and password, then returns a JWT token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication success with token"
+          },
+          "401": {
+            "description": "Authentication failed"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/authentications/google": {
+      "post": {
+        "summary": "Authenticate user with Google token and return a JWT token",
+        "description": "Authenticates a user using a Google token, and returns a JWT token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "googleToken": {
+                    "type": "string",
+                    "description": "Google ID token from the frontend"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication success with JWT token"
+          },
+          "401": {
+            "description": "Authentication failed"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "summary": "Ottieni informazioni sull'utente",
+        "description": "Ottieni informazioni sull'utente utilizzando un token JWT valido.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Informazioni sull'utente"
+          },
+          "401": {
+            "description": "Non autorizzato, token mancante o non valido"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Utenti/ruolo": {
+      "get": {
+        "summary": "Ottieni utenti per ruolo",
+        "description": "Recupera un elenco di utenti filtrati per ruolo.",
+        "tags": [
+          "Utenti"
+        ],
+        "parameters": [
+          {
+            "name": "ruolo",
+            "in": "query",
+            "required": true,
+            "description": "Il ruolo degli utenti da filtrare (es., 'organizzatore', 'utente_base', 'amministratore').",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Elenco di utenti con il ruolo specificato"
+          },
+          "400": {
+            "description": "Parametro ruolo non valido"
+          },
+          "404": {
+            "description": "Nessun utente trovato con il ruolo specificato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Utenti/{id}": {
+      "get": {
+        "summary": "Ottieni utente per ID",
+        "description": "Recupera le informazioni di un utente tramite ID.",
+        "tags": [
+          "Utenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "L'ID dell'utente da recuperare.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Informazioni sull'utente"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Utenti": {
+      "post": {
+        "summary": "Registra un nuovo utente",
+        "description": "Crea un nuovo utente nel database. L'ID viene generato automaticamente.",
+        "tags": [
+          "Utenti"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome",
+                  "username",
+                  "email",
+                  "password",
+                  "genere",
+                  "data_registrazione",
+                  "preferenze_notifiche",
+                  "ruolo",
+                  "verificationToken"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Il nome dell'utente"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Il nome utente dell'utente"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "L'email dell'utente"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "La password dell'utente"
+                  },
+                  "genere": {
+                    "type": "string",
+                    "description": "Il genere dell'utente"
+                  },
+                  "data_registrazione": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "La data di registrazione"
+                  },
+                  "preferenze_notifiche": {
+                    "type": "string",
+                    "description": "Preferenze di notifica dell'utente"
+                  },
+                  "ruolo": {
+                    "type": "string",
+                    "description": "Il ruolo dell'utente"
+                  },
+                  "foto_profilo": {
+                    "type": "string",
+                    "description": "Foto profilo dell'utente"
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "description": "Token per verifica dell'utente"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utente creato con successo"
+          },
+          "400": {
+            "description": "Dati di input non validi o email già esistente"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Aggiorna il nome utente dell'utente autenticato",
+        "description": "Modifica il nome utente dell'utente attualmente autenticato. Richiede un token JWT valido.",
+        "tags": [
+          "Utenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Il nuovo nome utente per l'utente."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nome utente aggiornato con successo"
+          },
+          "400": {
+            "description": "ID o nome utente non valido"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina l'account dell'utente autenticato",
+        "description": "Permette all'utente autenticato di eliminare il proprio account utilizzando un token JWT valido.",
+        "tags": [
+          "Utenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utente eliminato con successo"
+          },
+          "401": {
+            "description": "Non autorizzato, token mancante o non valido"
+          },
+          "403": {
+            "description": "Vietato, l'utente non è autorizzato a eliminare questo account"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Utenti/profilo/{id}": {
+      "get": {
+        "summary": "Ottieni il profilo utente con i post giornalieri",
+        "description": "Recupera i dettagli di un utente insieme ai suoi post giornalieri in base all'ID utente.",
+        "tags": [
+          "Utenti"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "L'ID dell'utente",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profilo utente con post"
+          },
+          "404": {
+            "description": "Utente o post non trovati"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Utenti/verifica": {
+      "patch": {
+        "summary": "Verifica l'account dell'utente",
+        "description": "Verifica l'account dell'utente.",
+        "tags": [
+          "Utenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nome utente aggiornato con successo"
+          },
+          "400": {
+            "description": "ID o nome utente non valido"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Commenti": {
+      "post": {
+        "summary": "Crea un nuovo commento",
+        "description": "Crea un commento protetto da token JWT.",
+        "tags": [
+          "Commenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "post_id": {
+                    "type": "string",
+                    "description": "ID del post su cui si commenta"
+                  },
+                  "contenuto": {
+                    "type": "string",
+                    "description": "Contenuto del commento"
+                  }
+                }
+              },
+              "example": {
+                "post_id": "6736020b2b45400acaf456b3",
+                "contenuto": "Questo è un commento."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Commento creato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Commento creato con successo"
+                    },
+                    "commento": {
+                      "type": "object",
+                      "properties": {
+                        "utente_id": {
+                          "type": "string",
+                          "example": "6736020b2b45400acaf456b4"
+                        },
+                        "post_id": {
+                          "type": "string",
+                          "example": "6736020b2b45400acaf456b3"
+                        },
+                        "commento": {
+                          "type": "string",
+                          "example": "Questo è un commento."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dati mancanti o non validi"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore durante la creazione del commento"
+          }
+        }
+      }
+    },
+    "/api/commenti/post/{id}": {
+      "get": {
+        "summary": "Recupera commenti di un post",
+        "tags": [
+          "Commenti"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commenti trovati"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore nel recupero dei commenti"
+          }
+        }
+      }
+    },
+    "/api/Commenti/{id}": {
+      "delete": {
+        "summary": "Elimina un commento",
+        "tags": [
+          "Commenti"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del commento da eliminare",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commento eliminato con successo"
+          },
+          "403": {
+            "description": "Non autorizzato a eliminare questo commento"
+          },
+          "404": {
+            "description": "Commento non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/like/{post_id}": {
+      "post": {
+        "summary": "Aggiungi un like a un post",
+        "tags": [
+          "Like"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del post a cui aggiungere il like",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Like aggiunto con successo"
+          },
+          "400": {
+            "description": "Like già presente per questo post"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore durante l'aggiunta del like"
+          }
+        }
+      }
+    },
+    "/api/like/{like_id}": {
+      "delete": {
+        "summary": "Rimuovi un like da un post",
+        "tags": [
+          "Like"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "like_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del like da rimuovere",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like rimosso con successo"
+          },
+          "403": {
+            "description": "Non autorizzato a rimuovere questo like"
+          },
+          "404": {
+            "description": "Like non trovato"
+          },
+          "500": {
+            "description": "Errore durante la rimozione del like"
+          }
+        }
+      }
+    },
+    "/api/like/post/{post_id}": {
+      "get": {
+        "summary": "Recupera tutti i like di un post",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Like"
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del post per cui recuperare i like",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like trovati"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore nel recupero dei like"
+          }
+        }
+      }
+    },
+    "/api/commenti/{commento_id}/like": {
+      "post": {
+        "summary": "Aggiungi un like a un commento",
+        "tags": [
+          "Like"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "commento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del commento a cui aggiungere il like",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Like aggiunto con successo"
+          },
+          "400": {
+            "description": "Like già presente per questo commento"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "404": {
+            "description": "Commento non trovato"
+          },
+          "500": {
+            "description": "Errore durante l'aggiunta del like"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Rimuovi un like da un commento",
+        "tags": [
+          "Like"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "commento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del commento da cui rimuovere il like",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like rimosso con successo"
+          },
+          "403": {
+            "description": "Non autorizzato a rimuovere questo like"
+          },
+          "404": {
+            "description": "Commento o like non trovato"
+          },
+          "500": {
+            "description": "Errore durante la rimozione del like"
+          }
+        }
+      },
+      "get": {
+        "summary": "Recupera tutti i like di un commento",
+        "tags": [
+          "Like"
+        ],
+        "parameters": [
+          {
+            "name": "commento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del commento per cui recuperare i like",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like trovati"
+          },
+          "404": {
+            "description": "Commento non trovato"
+          },
+          "500": {
+            "description": "Errore nel recupero dei like"
+          }
+        }
+      }
+    },
+    "/api/Partecipazioni/Eventi/{id}": {
+      "get": {
+        "summary": "Recupera utenti partecipanti ad un evento",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento trovato"
+          },
+          "404": {
+            "description": "Evento non trovato"
+          }
+        }
+      }
+    },
+    "/api/Partecipazioni/Party/{id}": {
+      "get": {
+        "summary": "Recupera utenti partecipanti ad un party",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del party",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Party trovato"
+          },
+          "404": {
+            "description": "Party non trovato"
+          }
+        }
+      }
+    },
+    "/api/Partecipazioni/Eventi/{evento_id}": {
+      "post": {
+        "summary": "Crea una partecipazione a un evento",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "evento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Partecipazione accettata"
+          },
+          "408": {
+            "description": "Numero massimo di partecipanti raggiunto"
+          },
+          "409": {
+            "description": "La partecipazione esiste già"
+          },
+          "500": {
+            "description": "Errore nel recupero di un id"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina una partecipazione ad un evento",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "evento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Partecipazione eliminata con successo"
+          },
+          "404": {
+            "description": "Nessuna partecipazione trovata"
+          },
+          "500": {
+            "description": "Errore nell'eliminazione"
+          }
+        }
+      }
+    },
+    "/api/Partecipazioni/Party/{party_id}": {
+      "post": {
+        "summary": "Crea una partecipazione a un party",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "party_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del party",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Partecipazione accettata"
+          },
+          "408": {
+            "description": "Numero massimo di partecipanti raggiunto"
+          },
+          "409": {
+            "description": "La partecipazione esiste già"
+          },
+          "500": {
+            "description": "Errore nel recupero di un id"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina una partecipazione ad un party",
+        "tags": [
+          "Partecipazioni"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "party_id",
+            "in": "path",
+            "required": true,
+            "description": "ID del party",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Partecipazione eliminata con successo"
+          },
+          "404": {
+            "description": "Nessuna partecipazione trovata"
+          },
+          "500": {
+            "description": "Errore nell'eliminazione"
+          }
+        }
+      }
+    },
+    "/api/eventi": {
+      "get": {
+        "summary": "Recupera tutti gli eventi",
+        "tags": [
+          "Eventi"
+        ],
+        "responses": {
+          "200": {
+            "description": "Eventi trovati"
+          },
+          "500": {
+            "description": "Errore interno nel recupero degli eventi"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea un nuovo evento",
+        "tags": [
+          "Eventi"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "descrizione": {
+                    "type": "string"
+                  },
+                  "data_inizio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "luogo": {
+                    "type": "string"
+                  },
+                  "posizione": {
+                    "type": "object",
+                    "properties": {
+                      "latitudine": {
+                        "type": "number"
+                      },
+                      "longitudine": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "numero_massimo_partecipanti": {
+                    "type": "integer"
+                  },
+                  "foto": {
+                    "type": "string"
+                  },
+                  "data_creazione": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "id_categoria": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evento creato con successo"
+          },
+          "400": {
+            "description": "ID non valido o errore nei dati di input"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a creare un evento"
+          },
+          "500": {
+            "description": "Errore nella creazione dell'evento"
+          }
+        }
+      }
+    },
+    "/api/eventi/{id}": {
+      "get": {
+        "summary": "Recupera un evento specifico",
+        "tags": [
+          "Eventi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento trovato"
+          },
+          "404": {
+            "description": "Evento non trovato"
+          },
+          "500": {
+            "description": "Errore nel recupero dell'evento"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina un evento specifico",
+        "tags": [
+          "Eventi"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento eliminato con successo"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a eliminare questo evento"
+          },
+          "404": {
+            "description": "Evento non trovato"
+          },
+          "500": {
+            "description": "Errore nell'eliminazione dell'evento"
+          }
+        }
+      }
+    },
+    "/api/eventi/coordinate": {
+      "post": {
+        "summary": "Recupera eventi nelle coordinate specificate",
+        "tags": [
+          "Eventi"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lng": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Eventi trovati"
+          },
+          "400": {
+            "description": "Latitudine o longitudine non valide"
+          },
+          "404": {
+            "description": "Nessun evento trovato"
+          },
+          "500": {
+            "description": "Errore interno nel recupero degli eventi"
+          }
+        }
+      }
+    },
+    "/api/eventi/organizzatore/{organizzatore_id}": {
+      "get": {
+        "summary": "Recupera gli eventi creati dallo stesso organizzatore",
+        "tags": [
+          "Eventi"
+        ],
+        "parameters": [
+          {
+            "name": "organizzatore_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'organizzatore",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Eventi trovati"
+          },
+          "404": {
+            "description": "Eventi non trovati"
+          }
+        }
+      }
+    },
+    "/api/eventi/categoria/{categoria}": {
+      "get": {
+        "summary": "Recupera gli eventi in base alla categoria",
+        "tags": [
+          "Eventi"
+        ],
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "path",
+            "required": true,
+            "description": "Categoria dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Eventi trovati"
+          },
+          "404": {
+            "description": "Eventi non trovati"
+          }
+        }
+      }
+    },
+    "/api/eventi/ricerca": {
+      "post": {
+        "summary": "Recupera eventi entro un raggio specificato",
+        "tags": [
+          "Eventi"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lng": {
+                    "type": "number"
+                  },
+                  "rad": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Eventi trovati nel raggio specificato"
+          },
+          "400": {
+            "description": "Parametri non validi"
+          },
+          "404": {
+            "description": "Nessun evento trovato nel raggio specificato"
+          },
+          "500": {
+            "description": "Errore interno nel recupero degli eventi"
+          }
+        }
+      }
+    },
+    "/api/party": {
+      "get": {
+        "summary": "Recupera tutti i party",
+        "tags": [
+          "Party"
+        ],
+        "responses": {
+          "200": {
+            "description": "Party trovati"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea un nuovo party",
+        "tags": [
+          "Party"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "descrizione": {
+                    "type": "string"
+                  },
+                  "data_inizio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "luogo": {
+                    "type": "string"
+                  },
+                  "posizione": {
+                    "type": "object",
+                    "properties": {
+                      "latitudine": {
+                        "type": "number"
+                      },
+                      "longitudine": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "numero_massimo_partecipanti": {
+                    "type": "integer"
+                  },
+                  "foto": {
+                    "type": "string"
+                  },
+                  "data_creazione": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "id_categoria": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Party creato con successo"
+          },
+          "400": {
+            "description": "ID non valido o errore nei dati di input"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a creare un party"
+          },
+          "500": {
+            "description": "Errore nella creazione del party"
+          }
+        }
+      }
+    },
+    "/api/party/{id}": {
+      "get": {
+        "summary": "Recupera un party specifico",
+        "tags": [
+          "Party"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del party",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Party trovato"
+          },
+          "404": {
+            "description": "Party non trovato"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina un party specifico",
+        "tags": [
+          "Party"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del party",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Party eliminato con successo"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a eliminare questo party"
+          },
+          "404": {
+            "description": "Party non trovato"
+          },
+          "500": {
+            "description": "Errore nell'eliminazione del party"
+          }
+        }
+      }
+    },
+    "/api/party/coordinate": {
+      "post": {
+        "summary": "Recupera party in delle coordinate specifiche",
+        "tags": [
+          "Party"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lng": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista di party trovati"
+          },
+          "400": {
+            "description": "Parametri non validi"
+          },
+          "404": {
+            "description": "Nessun party trovato"
+          }
+        }
+      }
+    },
+    "/api/party/organizzatore/{organizzatore_id}": {
+      "get": {
+        "summary": "Recupera i party creati dallo stesso organizzatore",
+        "tags": [
+          "Party"
+        ],
+        "parameters": [
+          {
+            "name": "organizzatore_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'organizzatore",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Party trovati"
+          },
+          "404": {
+            "description": "Party non trovati"
+          }
+        }
+      }
+    },
+    "/api/party/categoria/{categoria}": {
+      "get": {
+        "summary": "Recupera i party in base alla categoria",
+        "tags": [
+          "Party"
+        ],
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "path",
+            "required": true,
+            "description": "Categoria del party",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Party trovati"
+          },
+          "404": {
+            "description": "Party non trovati"
+          }
+        }
+      }
+    },
+    "/api/party/ricerca": {
+      "post": {
+        "summary": "Recupera party in un raggio specifico",
+        "tags": [
+          "Party"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number",
+                    "description": "Latitudine del party"
+                  },
+                  "lng": {
+                    "type": "number",
+                    "description": "Longitudine del party"
+                  },
+                  "rad": {
+                    "type": "number",
+                    "description": "Raggio di ricerca in chilometri"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista di party trovati"
+          },
+          "400": {
+            "description": "Parametri non validi"
+          },
+          "404": {
+            "description": "Nessun party trovato nel raggio specificato"
+          }
+        }
+      }
+    },
+    "/api/faqeventi": {
+      "post": {
+        "summary": "Crea una nuova FAQ evento",
+        "tags": [
+          "FAQ eventi"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_evento": {
+                    "type": "string"
+                  },
+                  "domanda": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Faq creata con successo"
+          },
+          "400": {
+            "description": "ID non valido o errore nei dati di input"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a creare una Faq"
+          },
+          "500": {
+            "description": "Errore nella creazione della faq"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Rispondi ad un FAQ evento",
+        "tags": [
+          "FAQ eventi"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "risposta": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "FAQ evento aggiornata con successo"
+          },
+          "400": {
+            "description": "ID non valido o errore nei dati di input"
+          },
+          "403": {
+            "description": "Utente non autorizzato"
+          },
+          "404": {
+            "description": "FAQ non trovata"
+          },
+          "500": {
+            "description": "Errore nel server"
+          }
+        }
+      }
+    },
+    "/api/faqeventi/{id}": {
+      "delete": {
+        "summary": "Elimina una faq specifica",
+        "tags": [
+          "FAQ eventi"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID della faq",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Faq eliminata con successo"
+          },
+          "403": {
+            "description": "Non autenticato/Non autorizzato a eliminare questa faq"
+          },
+          "404": {
+            "description": "Faq non trovata"
+          },
+          "500": {
+            "description": "Errore nell'eliminazione della faq"
+          }
+        }
+      }
+    },
+    "/api/faqeventi/evento/{evento_id}": {
+      "get": {
+        "summary": "Recupera le faq relative allo stesso evento",
+        "tags": [
+          "FAQ eventi"
+        ],
+        "parameters": [
+          {
+            "name": "evento_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'evento",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Faq trovate"
+          },
+          "404": {
+            "description": "Faq non trovate"
+          }
+        }
+      }
+    },
+    "/api/Post": {
+      "get": {
+        "summary": "Recupera tutti i post",
+        "description": "Ottieni un elenco di tutti i post nel database, inclusi informazioni aggiuntive come descrizione, posizione e data di creazione.",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Post recuperati con successo"
+          },
+          "404": {
+            "description": "Nessun post trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea un nuovo post",
+        "description": "Crea un nuovo post con i dettagli forniti.",
+        "tags": [
+          "Post"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "descrizione": {
+                    "type": "string"
+                  },
+                  "contenuto": {
+                    "type": "string"
+                  },
+                  "luogo": {
+                    "type": "string"
+                  },
+                  "posizione": {
+                    "type": "object",
+                    "properties": {
+                      "latitudine": {
+                        "type": "number"
+                      },
+                      "longitudine": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "data_creazione": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "descrizione",
+                  "contenuto",
+                  "luogo",
+                  "posizione",
+                  "data_creazione"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post creato con successo"
+          },
+          "400": {
+            "description": "Campi mancanti o non validi"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Post/{id}": {
+      "get": {
+        "summary": "Recupera i post per ID utente",
+        "description": "Ottieni un elenco di tutti i post creati da un utente specifico.",
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "L'ID dell'utente i cui post vuoi recuperare.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post recuperati con successo"
+          },
+          "404": {
+            "description": "Nessun post trovato per l'utente specificato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina un post",
+        "description": "Elimina un post specifico per ID. Solo il proprietario del post può eliminarlo.",
+        "tags": [
+          "Post"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "L'ID del post da eliminare",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post eliminato con successo"
+          },
+          "401": {
+            "description": "Non autorizzato, l'utente non è il proprietario del post"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Post/luogo": {
+      "post": {
+        "summary": "Recupera i post vicino a una posizione specifica",
+        "description": "Ottieni post filtrati in base alla vicinanza a un insieme di coordinate specificato.",
+        "tags": [
+          "Post"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lng": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post recuperati con successo"
+          },
+          "400": {
+            "description": "Parametri non validi"
+          },
+          "404": {
+            "description": "Nessun post trovato nella posizione specificata"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Post/{post_id}": {
+      "get": {
+        "summary": "Recupera un post per ID",
+        "description": "Recupera un post specifico utilizzando il suo identificatore univoco.",
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "description": "L'ID del post da recuperare.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post recuperato con successo"
+          },
+          "400": {
+            "description": "L'ID del post è mancante o non valido"
+          },
+          "404": {
+            "description": "Post non trovato"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/Post/ricerca": {
+      "post": {
+        "summary": "Recupera post in un raggio specifico",
+        "tags": [
+          "Post"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number",
+                    "description": "Latitudine del post"
+                  },
+                  "lng": {
+                    "type": "number",
+                    "description": "Longitudine del post"
+                  },
+                  "rad": {
+                    "type": "number",
+                    "description": "Raggio di ricerca in chilometri"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista di post trovati"
+          },
+          "400": {
+            "description": "Parametri non validi"
+          },
+          "404": {
+            "description": "Nessun post trovato nel raggio specificato"
+          }
+        }
+      }
+    },
+    "/api/post/organizzatore/{organizzatore_id}": {
+      "get": {
+        "summary": "Recupera i party creati dallo stesso organizzatore",
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "organizzatore_id",
+            "in": "path",
+            "required": true,
+            "description": "ID dell'organizzatore",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post trovati"
+          },
+          "404": {
+            "description": "Post non trovati"
+          }
+        }
+      }
+    },
+    "/generate-signed-url-post": {
+      "post": {
+        "summary": "Genera un URL sicuro per il caricamento di immagini su Cloudinary",
+        "tags": [
+          "CloudFoto"
+        ],
+        "description": "Questo endpoint fornisce un URL sicuro (con firma) che può essere utilizzato per caricare immagini su Cloudinary.",
+        "responses": {
+          "200": {
+            "description": "URL sicuro generato con successo"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "signature": {
+                      "type": "string",
+                      "description": "La signature da usare per l'upload"
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "Il timestamp in secondi"
+                    },
+                    "upload_preset": {
+                      "type": "string",
+                      "description": "Il preset di upload configurato su Cloudinary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/generate-signed-url-party": {
+      "post": {
+        "summary": "Genera un URL sicuro per il caricamento di immagini su Cloudinary",
+        "tags": [
+          "CloudFoto"
+        ],
+        "description": "Questo endpoint fornisce un URL sicuro (con firma) che può essere utilizzato per caricare immagini su Cloudinary.",
+        "responses": {
+          "200": {
+            "description": "URL sicuro generato con successo"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "signature": {
+                      "type": "string",
+                      "description": "La signature da usare per l'upload"
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "Il timestamp in secondi"
+                    },
+                    "upload_preset": {
+                      "type": "string",
+                      "description": "Il preset di upload configurato su Cloudinary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/generate-signed-url-Eventi": {
+      "post": {
+        "summary": "Genera un URL sicuro per il caricamento di immagini su Cloudinary",
+        "tags": [
+          "CloudFoto"
+        ],
+        "description": "Questo endpoint fornisce un URL sicuro (con firma) che può essere utilizzato per caricare immagini su Cloudinary.",
+        "responses": {
+          "200": {
+            "description": "URL sicuro generato con successo"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "signature": {
+                      "type": "string",
+                      "description": "La signature da usare per l'upload"
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "Il timestamp in secondi"
+                    },
+                    "upload_preset": {
+                      "type": "string",
+                      "description": "Il preset di upload configurato su Cloudinary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/send-email": {
+      "post": {
+        "summary": "Invia un'email ad un utente base",
+        "tags": [
+          "EmailService"
+        ],
+        "description": "Questo endpoint consente di inviare un'email agli utenti.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "type": "string",
+                    "description": "Indirizzo email del destinatario"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Oggetto dell'email"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Contenuto testuale dell'email"
+                  },
+                  "html": {
+                    "type": "string",
+                    "description": "Contenuto HTML dell'email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email inviata con successo"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/verify": {
+      "get": {
+        "summary": "Verifica un account utente",
+        "tags": [
+          "EmailService"
+        ],
+        "description": "Questo endpoint verifica un account utente utilizzando un token univoco.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "description": "Il token di verifica univoco",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verifica completata con successo"
+          },
+          "400": {
+            "description": "Token non valido o utente già verificato"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          }
+        }
+      }
+    },
+    "/api/categoria/{id}": {
+      "get": {
+        "summary": "Recupera una categoria specifica",
+        "tags": [
+          "Category"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID della categoria",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoria trovata"
+          },
+          "404": {
+            "description": "Categoria non trovata"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina una categoria",
+        "tags": [
+          "Category"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del commento da eliminare",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoria eliminata con successo"
+          },
+          "403": {
+            "description": "Non autorizzato a eliminare una categoria"
+          },
+          "404": {
+            "description": "Categoria non trovata"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/api/categoria": {
+      "get": {
+        "summary": "Recupera tutte le categorie",
+        "tags": [
+          "Category"
+        ],
+        "responses": {
+          "200": {
+            "description": "Categorie trovate"
+          },
+          "500": {
+            "description": "Errore nel recupero delle categorie"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea una nuova categoria",
+        "description": "Crea una nuova categoria nel database. L'ID viene generato automaticamente.",
+        "tags": [
+          "Category"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Il nome dell'utente"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Categoria creata con successo"
+          },
+          "400": {
+            "description": "Non autorizzato a creare una categoria"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": [
+    {
+      "name": "Eventi",
+      "description": "Gestione degli eventi"
+    },
+    {
+      "name": "Party",
+      "description": "Gestione dei party"
+    },
+    {
+      "name": "FAQ eventi",
+      "description": "Gestione delle FAQ"
+    }
+  ]
+}
