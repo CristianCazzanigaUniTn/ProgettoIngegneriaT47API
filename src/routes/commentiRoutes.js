@@ -2,7 +2,7 @@
 const express = require('express');
 const Commento = require('../model/Commento');
 const Post = require('../model/Post'); // Modello per la collezione "Post" (presumendo che esista)
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const router = express.Router();
 
 /**

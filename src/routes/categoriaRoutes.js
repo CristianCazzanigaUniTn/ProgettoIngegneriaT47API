@@ -1,7 +1,7 @@
 const express = require('express');
 const Categoria = require('../model/Categoria');
 const User = require('../model/User');
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const router = express.Router();
 
 

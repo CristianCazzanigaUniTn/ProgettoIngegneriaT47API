@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Event = require('../model/Evento'); // Assicurati che il percorso sia corretto
-const tokenChecker = require('../src/TokenChecker')
+const tokenChecker = require('../tokenChecker/TokenChecker')
 const Category = require('../model/Categoria');
 
 /**
@@ -127,6 +127,15 @@ router.post('/api/eventi', tokenChecker, async (req, res) => {
         if(req.user.ruolo.toString() != "organizzatore")
             return res.status(403).json({ error: 'Non autorizzato a creare questo evento' });
 
+        
+        if (data_inizio && data_creazione && data_inizio < data_creazione) {
+            if(!data_inizio || !data_creazione)
+            {
+                return res.status(400).json({ error: 'date errate' });
+            }
+            return res.status(400).json({ error: 'data inizio errata' });
+        }   
+
         let lat = 0;
         let lng = 0;
 
@@ -152,6 +161,7 @@ router.post('/api/eventi', tokenChecker, async (req, res) => {
                 return res.status(400).json({ error: 'Categoria non trovata' });
             }
         }
+
 
         // Creare l'oggetto evento
         const nuovoEvento = new Event({

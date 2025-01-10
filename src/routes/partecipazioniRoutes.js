@@ -1,7 +1,7 @@
 // Import delle dipendenze necessarie
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const PartecipazioneEvento = require('../model/PartecipazioneEvento');
 const PartecipazioneParty = require('../model/PartecipazioneParty');
 const Evento = require('../model/Evento');

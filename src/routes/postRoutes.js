@@ -1,6 +1,6 @@
 const express = require('express');
-const Post = require('../model/Post'); 
-const tokenChecker = require('../src/TokenChecker');
+const Post = require('../model/Post');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const router = express.Router();
 
 /**
@@ -21,7 +21,7 @@ const router = express.Router();
 router.get('/api/Post', async (req, res) => {
     try {
         // Trova tutti i post nel database
-        const posts = await Post.find(); 
+        const posts = await Post.find();
 
         if (posts.length > 0) {
             res.status(200).json({
@@ -70,7 +70,7 @@ router.get('/api/Post', async (req, res) => {
  */
 router.get('/api/Post/:id', async (req, res) => {
     try {
-        const { id } = req.params; 
+        const { id } = req.params;
 
         const posts = await Post.find({ utente_id: id }).exec();
 
@@ -82,7 +82,7 @@ router.get('/api/Post/:id', async (req, res) => {
                     descrizione: post.descrizione,
                     contenuto: post.contenuto,
                     luogo: post.luogo,
-                    posizione: post.posizione, 
+                    posizione: post.posizione,
                     data_creazione: post.data_creazione,
                 }))
             });
@@ -143,13 +143,18 @@ router.get('/api/Post/:id', async (req, res) => {
  */
 router.post('/api/Post', tokenChecker, async (req, res) => {
     try {
-        const { descrizione, contenuto, luogo, posizione, data_creazione} = req.body;
+        const { descrizione, contenuto, luogo, posizione, data_creazione } = req.body;
 
-        if(!req.user)
+        if (!req.user)
             return res.status(403).json({ error: 'Utente non autenticato' });
 
-        if(req.user.ruolo.toString() != "utente_base")
+        if (req.user.ruolo.toString() != "utente_base")
             return res.status(403).json({ error: 'Non autorizzato a creare questo post' });
+
+
+        if (!data_creazione) {
+            return res.status(400).json({ error: 'data creazione non presente'});
+        }
 
         let lat = 0;
         let lng = 0;
@@ -164,7 +169,7 @@ router.post('/api/Post', tokenChecker, async (req, res) => {
         if (isNaN(lat) || lat < -90 || lat > 90 || isNaN(lng) || lng < -180 || lng > 180) {
             return res.status(400).json({ error: 'Latitudine o longitudine non valide' });
         }
-    
+
 
         // Controllo dei campi obbligatori
         if (!descrizione || !luogo || !posizione || !data_creazione) {
@@ -231,11 +236,11 @@ router.post('/api/Post', tokenChecker, async (req, res) => {
 router.delete('/api/Post/:id', tokenChecker, async (req, res) => {
     try {
 
-        if(!req.user)
-            return res.status(403).json({error: 'Utente non autenticato'});
+        if (!req.user)
+            return res.status(403).json({ error: 'Utente non autenticato' });
 
         const postId = req.params.id;
-        const userId = req.user._id; 
+        const userId = req.user._id;
 
         const post = await Post.findById(postId);
         if (!post) {
@@ -351,7 +356,7 @@ router.post('/api/Post/luogo', async (req, res) => {
  */
 router.get('/api/Post/:post_id', async (req, res) => {
     try {
-        const { _id } = req.params; 
+        const { _id } = req.params;
         if (!_id) {
             return res.status(400).json({
                 success: false,
@@ -436,8 +441,8 @@ router.post('/api/post/ricerca', async (req, res) => {
             const dLat = (lat2 - lat1) * (Math.PI / 180);
             const dLon = (lon2 - lon1) * (Math.PI / 180);
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c; // Distanza in chilometri
         };
@@ -455,7 +460,7 @@ router.post('/api/post/ricerca', async (req, res) => {
         }
 
         res.json(PostNelRaggio);
-    }catch (err) {
+    } catch (err) {
         res.status(500).json({ error: 'Errore nel recupero dei post', dettagli: err.message });
     }
 });

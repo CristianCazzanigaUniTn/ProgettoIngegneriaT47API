@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Party = require('../model/Party'); // Assicurati che il percorso sia corretto
 const Category = require('../model/Categoria');
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 
 
 /**
@@ -126,6 +126,15 @@ router.post('/api/party', tokenChecker, async (req, res) => {
         if(req.user.ruolo.toString() != "utente_base")
             return res.status(403).json({ error: 'Non autorizzato a eliminare questo party' });
 
+
+        if (data_inizio && data_creazione && data_inizio < data_creazione) {
+            if(!data_inizio || !data_creazione)
+            {
+                return res.status(400).json({ error: 'date errate' });
+            }
+            return res.status(400).json({ error: 'data inizio errata' });
+        }   
+        
         let lat = 0;
         let lng = 0;
 
