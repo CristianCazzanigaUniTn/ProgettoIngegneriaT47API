@@ -48,7 +48,7 @@ const swaggerOptions = {
             },
         }
     },
-    apis: ['./routes/authRoutes.js', './routes/userRoutes.js', './routes/commentiRoutes.js', './routes/likeRoutes.js', './routes/partecipazioniRoutes.js', './routes/eventRoutes.js', './routes/partyRoutes.js', './routes/faqRoutes.js', './routes/postRoutes.js', './routes/cloudFotoRoutes.js', './routes/EmailRoutes.js', './routes/categoriaRoutes.js'] 
+    apis: ['./src/routes/authRoutes.js', './src/routes/userRoutes.js', './src/routes/commentiRoutes.js', './src/routes/likeRoutes.js', './src/routes/partecipazioniRoutes.js', './src/routes/eventRoutes.js', './src/routes/partyRoutes.js', './src/routes/faqRoutes.js', './src/routes/postRoutes.js', './src/routes/cloudFotoRoutes.js', './src/routes/EmailRoutes.js', './src/routes/categoriaRoutes.js'] 
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
