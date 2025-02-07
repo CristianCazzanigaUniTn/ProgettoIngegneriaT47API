@@ -472,59 +472,5 @@ router.get('/api/Utenti/profilo/:id', async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /api/Utenti/verifica:
- *   patch:
- *     summary: Verifica l'account dell'utente
- *     description: Verifica l'account dell'utente.
- *     tags: [Utenti]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Nome utente aggiornato con successo
- *       400:
- *         description: ID o nome utente non valido
- *       404:
- *         description: Utente non trovato
- *       500:
- *         description: Errore del server
- */
-router.patch('/api/Utenti/verifica',tokenChecker,async (req, res) => {
-    try {
-        const userId = req.user._id; // Extract the user's ID from the token
-
-        // Find user by ID and update username
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { verified: true },
-            { new: true, runValidators: true }
-        );
-
-        if (updatedUser) {
-            res.status(200).json({
-                success: true,
-                user: {
-                    id: updatedUser._id,
-                    username: updatedUser.username,
-                    email: updatedUser.email,
-                    genere: updatedUser.genere,
-                    data_registrazione: updatedUser.data_registrazione,
-                    preferenze_notifiche: updatedUser.preferenze_notifiche,
-                    ruolo: updatedUser.ruolo,
-                    foto_profilo: updatedUser.foto_profilo,
-                    verified: updatedUser.verified
-                }
-            });
-        } else {
-            res.status(404).json({ success: false, message: 'User not found' });
-        }
-    } catch (err) {
-        console.error('Error updating username:', err);
-        res.status(500).json({ success: false, message: 'Server error', error: err.message });
-    }
-});
-
 
 module.exports = router;

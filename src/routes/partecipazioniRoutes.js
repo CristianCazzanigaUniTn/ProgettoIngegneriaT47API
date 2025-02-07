@@ -43,11 +43,7 @@ router.get('/api/Partecipazioni/Eventi/:id', async (req, res) => {
             return res.status(404).json({ error: 'Evento non trovato' });
         }
         const partecipazioni = await PartecipazioneEvento.find({ evento_id: id }).populate('utente_id');
-        if (partecipazioni.length === 0) {
-            return res.status(404).json({ error: 'Nessun partecipante trovato per questo evento' });
-        }
         const partecipanti = partecipazioni.map(partecipazione => partecipazione.utente_id);
-    
         res.status(200).json(partecipanti);
     } catch (err) {
         res.status(500).json({ error: 'Errore nel recupero dei partecipanti dell\'evento', details: err });

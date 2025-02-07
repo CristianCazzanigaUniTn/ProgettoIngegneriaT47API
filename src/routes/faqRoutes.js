@@ -148,17 +148,9 @@ router.delete('/api/faqeventi/:id', tokenChecker, async (req, res) => {
 router.get('/api/faqeventi/evento/:evento_id', async (req, res) => {
 
     try {
-        // Converti l'ID in ObjectId usando "new" per evitare il problema
         const eventoId = new mongoose.Types.ObjectId(req.params.evento_id);
-
-        // Cerca gli eventi associati a quell'organizzatore
         const faq = await Faq.find({ evento: eventoId });
-
-        if (faq.length === 0) {
-            return res.status(404).json({ error: 'Nessuna faq trovata' });
-        }
-
-        res.json(faq);
+        res.status(200).json(faq);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Errore nel recupero deglle faq', dettagli: err.message });
