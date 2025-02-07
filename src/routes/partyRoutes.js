@@ -398,7 +398,7 @@ router.post('/api/party/ricerca', async (req, res) => {
         });
 
         if (partyNelRaggio.length === 0) {
-            return res.status(404).json({ error: 'Nessun party trovato nel raggio specificato' });
+            return res.status(200).json([]);
         }
 
         res.json(partyNelRaggio);

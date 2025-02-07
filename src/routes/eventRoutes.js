@@ -405,7 +405,7 @@ router.post('/api/eventi/ricerca', async (req, res) => {
         });
 
         if (eventiNelRaggio.length === 0) {
-            return res.status(404).json({ error: 'Nessun evento trovato nel raggio specificato' });
+            return res.status(200).json([]);
         }
 
         res.json(eventiNelRaggio);

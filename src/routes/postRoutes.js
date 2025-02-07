@@ -37,7 +37,7 @@ router.get('/api/Post', async (req, res) => {
                 }))
             });
         } else {
-            res.status(404).json({ success: false, message: 'No posts found' });
+            res.status(200).json([]);
         }
     } catch (err) {
         console.error('Error fetching posts:', err);
@@ -456,7 +456,7 @@ router.post('/api/post/ricerca', async (req, res) => {
         });
 
         if (PostNelRaggio.length === 0) {
-            return res.status(404).json({ error: 'Nessun post trovato nel raggio specificato' });
+            return res.status(200).json([]);
         }
 
         res.json(PostNelRaggio);
