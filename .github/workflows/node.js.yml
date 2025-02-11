@@ -19,6 +19,9 @@ jobs:
       SECRET: ${{ secrets.SECRET }}
       API_KEY: ${{ secrets.API_KEY }}
       DB: ${{ secrets.DB }}
+      NODE_ENV: test
+
+
     strategy:
       matrix:
         node-version: [18.x]
