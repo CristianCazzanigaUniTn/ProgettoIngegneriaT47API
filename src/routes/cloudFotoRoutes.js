@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cloudinary = require('cloudinary').v2;
-const tokenChecker = require('../tokenChecker/TokenChecker'); // Verifica il token JWT
+const tokenChecker = require('../src/TokenChecker'); // Verifica il token JWT
 
 // Configurazione di Cloudinary
 cloudinary.config({
@@ -20,6 +20,8 @@ cloudinary.config({
  *     responses:
  *       200:
  *         description: URL sicuro generato con successo
+ *       403:
+ *         description: Solo utente_base può accedere a questo endpoint
  *     security:
  *       - bearerAuth: []
  *         content:
@@ -69,6 +71,8 @@ router.post('/generate-signed-url-post', tokenChecker, (req, res) => {
  *     responses:
  *       200:
  *         description: URL sicuro generato con successo
+ *       403:
+ *         description: Solo utente_base può accedere a questo endpoint
  *     security:
  *       - bearerAuth: []
  *         content:

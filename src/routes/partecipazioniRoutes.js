@@ -1,11 +1,12 @@
 // Import delle dipendenze necessarie
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const tokenChecker = require('../src/TokenChecker');
 const PartecipazioneEvento = require('../model/PartecipazioneEvento');
 const PartecipazioneParty = require('../model/PartecipazioneParty');
 const Evento = require('../model/Evento');
 const Party = require('../model/Party');
+const User = require('../model/User');
 const router = express.Router();
 
 // Middleware per verificare il ruolo utente_base
@@ -102,6 +103,8 @@ router.get('/api/Partecipazioni/Party/:id', async (req, res) => {
  *     responses:
  *       '201':
  *         description: Partecipazione accettata
+ *       '404':
+ *         description: Utente/Evento non trovato
  *       '409':
  *         description: La partecipazione esiste già
  *       '408':
@@ -112,7 +115,7 @@ router.get('/api/Partecipazioni/Party/:id', async (req, res) => {
 router.post('/api/Partecipazioni/Eventi/:evento_id', tokenChecker, verificaRuolo, async (req, res) => {
     const { evento_id } = req.params; 
     const userId = req.user._id; 
-
+    
     try {
         const evento = await Evento.findById(evento_id);
         if (!evento) {
@@ -156,6 +159,8 @@ router.post('/api/Partecipazioni/Eventi/:evento_id', tokenChecker, verificaRuolo
  *     responses:
  *       '201':
  *         description: Partecipazione accettata
+ *       '404':
+ *         description: Utente/Party non trovato
  *       '409':
  *         description: La partecipazione esiste già
  *       '408':

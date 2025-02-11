@@ -3,7 +3,7 @@ const express = require('express');
 const Post = require('../model/Post');
 const Like = require('../model/Like');
 const Commento = require('../model/Commento'); 
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const tokenChecker = require('../src/TokenChecker');
 const router = express.Router();
 /**
  * @swagger
@@ -40,6 +40,10 @@ router.post('/api/like/:post_id', tokenChecker, async (req, res) => {
         const post = await Post.findById(post_id);
         if (!post) {
             return res.status(404).json({ error: 'Post non trovato' });
+        }
+
+        if(!req.user || !req.user._id){
+            return res.status(401).json({ error: 'Token non valido o mancante'});
         }
 
         const existingLike = await Like.findOne({ post_id, utente_id: user_id });
@@ -147,7 +151,7 @@ router.get('/api/like/post/:post_id', async (req, res) => {
             return res.status(404).json({ error: 'Post non trovato' });
         }
         const likes = await Like.find({ post_id });
-        res.json(likes);
+        res.status(200).json(likes);
     } catch (err) {
         console.error('Errore nel recupero dei like:', err);
         res.status(500).json({ error: 'Errore nel recupero dei like' });

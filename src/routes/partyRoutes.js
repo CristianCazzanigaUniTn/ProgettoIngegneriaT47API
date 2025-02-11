@@ -3,7 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Party = require('../model/Party'); // Assicurati che il percorso sia corretto
 const Category = require('../model/Categoria');
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const User = require('../model/User');
+const tokenChecker = require('../src/TokenChecker');
 
 
 /**
@@ -48,11 +49,19 @@ router.get('/api/party', async (req, res) => {
  *     responses:
  *       200:
  *         description: Party trovato
+ *       400:
+ *         description: Party ID richiesto
  *       404:
  *         description: Party non trovato
  */
 router.get('/api/party/:id', async (req, res) => {
     try {
+        if (!req.params.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Party ID richiesto',
+            });
+        }
         const party = await Party.findById(req.params.id);
         if (!party) {
             return res.status(404).json({ error: 'Party non trovato' });
@@ -110,6 +119,8 @@ router.get('/api/party/:id', async (req, res) => {
  *         description: Non autenticato/Non autorizzato a creare un party
  *       400:
  *         description: ID non valido o errore nei dati di input
+ *       404:
+ *         description: Categoria non trovata
  *       500:
  *         description: Errore nella creazione del party
  */
@@ -120,11 +131,16 @@ router.post('/api/party', tokenChecker, async (req, res) => {
 
     try {
 
+        
+        if(!nome || !descrizione || !data_inizio || !luogo || !posizione || !numero_massimo_partecipanti || !foto || !data_creazione || !id_categoria){
+            return res.status(400).json({ error: 'Tutti i campi sono richiesti' });
+        }
+
         if(!req.user)
             return res.status(403).json({ error: 'Utente non autenticato' });
 
         if(req.user.ruolo.toString() != "utente_base")
-            return res.status(403).json({ error: 'Non autorizzato a eliminare questo party' });
+            return res.status(403).json({ error: 'Non autorizzato a creare questo party' });
 
 
         if (data_inizio && data_creazione && data_inizio < data_creazione) {
@@ -149,18 +165,19 @@ router.post('/api/party', tokenChecker, async (req, res) => {
             return res.status(400).json({ error: 'Latitudine o longitudine non valide' });
         }
 
-        // Verifica che l'ID della categoria sia valido
-        if (id_categoria && !mongoose.Types.ObjectId.isValid(id_categoria)) {
-            return res.status(400).json({ error: 'ID categoria non valido' });
-        }
+        
 
         // Verifica che la categoria esista nel database, se l'ID è valido
         if (id_categoria) {
-            const categoria = await Category.findById(id_categoria);
+            
+            const categoria = await Category.findOne({ _id: id_categoria }).exec();
+
             if (!categoria) {
-                return res.status(400).json({ error: 'Categoria non trovata' });
+                return res.status(404).json({ error: 'Categoria non trovata' });
             }
         }
+
+        
 
         // Creare l'oggetto party
         const newParty = new Party({
@@ -293,15 +310,20 @@ router.post('/api/party/coordinate', async (req, res) => {
  *       200:
  *         description: Party trovati
  *       404:
- *         description: Party non trovati
+ *         description: Utente non trovato
  */
 router.get('/api/party/organizzatore/:organizzatore_id', async (req, res) => {
     try {
-        const parties = await Party.find({ Organizzatore: req.params.organizzatore_id });
-        if (parties.length === 0) {
-            return res.status(404).json({ error: 'Nessun party trovato' });
+        const user = await User.findOne({_id: req.params.organizzatore_id}).exec();
+        
+        if (!user) {
+            return res.status(404).json({ error: 'Utente non trovato' });
+        }else{
+            const parties = await Party.find({ Organizzatore: req.params.organizzatore_id });
+        
+            res.json(parties);
         }
-        res.json(parties);
+
     } catch (err) {
         res.status(500).json({ error: 'Errore nel recupero dei party' });
     }
@@ -365,8 +387,8 @@ router.get('/api/party/categoria/:categoria', async (req, res) => {
  *         description: Lista di party trovati
  *       400:
  *         description: Parametri non validi
- *       404:
- *         description: Nessun party trovato nel raggio specificato
+ *       500:
+ *         description: Errore del server
  */
 router.post('/api/party/ricerca', async (req, res) => {
     const { lat, lng, rad } = req.body;

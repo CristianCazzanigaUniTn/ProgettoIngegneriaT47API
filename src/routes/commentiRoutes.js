@@ -2,7 +2,7 @@
 const express = require('express');
 const Commento = require('../model/Commento');
 const Post = require('../model/Post'); // Modello per la collezione "Post" (presumendo che esista)
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const tokenChecker = require('../src/TokenChecker');
 const router = express.Router();
 
 /**
@@ -77,14 +77,14 @@ router.post('/api/Commenti', tokenChecker, async (req, res) => {
     }
 
     try {
-        const post = await Post.findById(post_id);
+        const post = await Post.findOne({_id: post_id});
         if (!post) {
             return res.status(404).json({ error: 'Post non trovato' });
         }
 
         const nuovoCommento = new Commento({
             utente_id: req.user._id,
-            post_id,
+            post_id: post_id,
             commento: contenuto,
         });
 
@@ -121,15 +121,15 @@ router.post('/api/Commenti', tokenChecker, async (req, res) => {
  */
 router.get('/api/commenti/post/:id', async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
+        const post = await Post.findOne({_id: req.params.id});
         if (!post) {
             return res.status(404).json({ error: 'Post non trovato' });
         }
         const commenti = await Commento.find({ post_id: req.params.id });
         if (commenti.length === 0) {
-            return res.json({ message: 'Post trovato, ma non ha commenti' });
+            return res.status(200).json({ message: 'Post trovato, ma non ha commenti' });
         }
-        res.json(commenti);
+        res.status(200).json(commenti);
     } catch (err) {
         res.status(500).json({ error: 'Errore nel recupero dei commenti', message: err.message });
     }

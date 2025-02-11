@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Event = require('../model/Evento'); // Assicurati che il percorso sia corretto
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const tokenChecker = require('../src/TokenChecker');
 const Faq = require('../model/Faq');
 
 /**
@@ -37,6 +37,8 @@ const Faq = require('../model/Faq');
  *         description: Faq creata con successo
  *       403:
  *         description: Non autenticato/Non autorizzato a creare una Faq
+ *       404:
+ *         description: Evento non trovato
  *       400:
  *         description: ID non valido o errore nei dati di input
  *       500:
@@ -55,7 +57,7 @@ router.post('/api/faqeventi', tokenChecker, async (req, res) => {
         if(req.user.ruolo.toString() != "utente_base")
             return res.status(403).json({ error: 'Non autorizzato a creare una faq eventi' });
 
-        if (id_evento && !mongoose.Types.ObjectId.isValid(id_evento)) {
+        if (!id_evento && !mongoose.Types.ObjectId.isValid(id_evento)) {
             return res.status(400).json({ error: 'ID evento non valido' });
         }
 
@@ -63,7 +65,7 @@ router.post('/api/faqeventi', tokenChecker, async (req, res) => {
         if (id_evento) {
             const evento = await Event.findById(id_evento);
             if (!evento) {
-                return res.status(400).json({ error: 'Evento non trovato' });
+                return res.status(404).json({ error: 'Evento non trovato' });
             }
         }
 
@@ -143,12 +145,16 @@ router.delete('/api/faqeventi/:id', tokenChecker, async (req, res) => {
  *       200:
  *         description: Faq trovate
  *       404:
- *         description: Faq non trovate
+ *         description: Evento non trovato
  */
 router.get('/api/faqeventi/evento/:evento_id', async (req, res) => {
 
     try {
         const eventoId = new mongoose.Types.ObjectId(req.params.evento_id);
+        const evento = await Event.findById(eventoId);
+        if (!evento) {
+            return res.status(404).json({ error: 'Evento non trovato' });
+        }
         const faq = await Faq.find({ evento: eventoId });
         res.status(200).json(faq);
     } catch (err) {
@@ -193,7 +199,7 @@ router.patch('/api/faqeventi', tokenChecker, async (req, res) => {
 
     try {
         // Verifica che l'ID sia valido
-        if (!mongoose.Types.ObjectId.isValid(id))
+        if (!id)
             return res.status(400).json({ error: 'ID non valido' });
 
         // Trova la FAQ per ID

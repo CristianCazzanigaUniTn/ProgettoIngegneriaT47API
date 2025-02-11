@@ -1,7 +1,7 @@
 const express = require('express');
 const User = require('../model/User');
 const Post = require('../model/Post'); // Modello post
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const tokenChecker = require('../src/TokenChecker');
 const router = express.Router();
 
 
@@ -161,11 +161,10 @@ router.get('/api/Utenti/:id', async (req, res) => {
             });
         } else {
             // Utente non trovato
-            res.status(404).json({ success: false, message: 'User not found' });
+            res.status(404).json({ success: false, message: 'Utente non trovato' });
         }
     } catch (err) {
-        console.error('Error fetching user by ID:', err);
-        res.status(500).json({ success: false, message: 'Server error', error: err.message || err });
+        res.status(500).json({ success: false, message: 'Errore del server', error: err.message || err });
     }
 });
 
@@ -239,14 +238,18 @@ router.post('/api/Utenti', async (req, res) => {
         const { nome, username, email, password, genere, data_registrazione, preferenze_notifiche, ruolo, foto_profilo, verificationToken} = req.body;
 
         if (!nome || !username || !email || !password || !genere || !data_registrazione || !preferenze_notifiche || !ruolo || !verificationToken) {
-            return res.status(400).json({ success: false, message: 'Missing required fields' });
+            return res.status(400).json({ success: false, message: 'Campi mancanti' });
         }
 
         const existingUser = await User.findOne({ email }).exec();
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'Email already registered' });
+            return res.status(400).json({ success: false, message: 'Registrazione fallita, mail già esistente' });
         }
-
+        const existingUser2 = await User.findOne({ username }).exec();
+        
+        if (existingUser2) {
+            return res.status(400).json({ success: false, message: 'Registrazione fallita, username già esistente' });
+        }
         const verified = false;
 
         const newUser = new User({
@@ -281,7 +284,6 @@ router.post('/api/Utenti', async (req, res) => {
             }
         });
     } catch (err) {
-        console.error('Error creating user:', err);
         res.status(500).json({ success: false, message: 'Server error', error: err.message });
     }
 });

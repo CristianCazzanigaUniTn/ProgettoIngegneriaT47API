@@ -1,6 +1,6 @@
 const express = require('express');
-const Post = require('../model/Post');
-const tokenChecker = require('../tokenChecker/TokenChecker');
+const Post = require('../model/Post'); 
+const tokenChecker = require('../src/TokenChecker');
 const router = express.Router();
 
 /**
@@ -21,7 +21,7 @@ const router = express.Router();
 router.get('/api/Post', async (req, res) => {
     try {
         // Trova tutti i post nel database
-        const posts = await Post.find();
+        const posts = await Post.find(); 
 
         if (posts.length > 0) {
             res.status(200).json({
@@ -37,7 +37,7 @@ router.get('/api/Post', async (req, res) => {
                 }))
             });
         } else {
-            res.status(200).json([]);
+            res.status(404).json({ success: false, message: 'No posts found' });
         }
     } catch (err) {
         console.error('Error fetching posts:', err);
@@ -70,7 +70,7 @@ router.get('/api/Post', async (req, res) => {
  */
 router.get('/api/Post/:id', async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params; 
 
         const posts = await Post.find({ utente_id: id }).exec();
 
@@ -82,7 +82,7 @@ router.get('/api/Post/:id', async (req, res) => {
                     descrizione: post.descrizione,
                     contenuto: post.contenuto,
                     luogo: post.luogo,
-                    posizione: post.posizione,
+                    posizione: post.posizione, 
                     data_creazione: post.data_creazione,
                 }))
             });
@@ -143,18 +143,13 @@ router.get('/api/Post/:id', async (req, res) => {
  */
 router.post('/api/Post', tokenChecker, async (req, res) => {
     try {
-        const { descrizione, contenuto, luogo, posizione, data_creazione } = req.body;
+        const { descrizione, contenuto, luogo, posizione, data_creazione} = req.body;
 
-        if (!req.user)
+        if(!req.user)
             return res.status(403).json({ error: 'Utente non autenticato' });
 
-        if (req.user.ruolo.toString() != "utente_base")
+        if(req.user.ruolo.toString() != "utente_base")
             return res.status(403).json({ error: 'Non autorizzato a creare questo post' });
-
-
-        if (!data_creazione) {
-            return res.status(400).json({ error: 'data creazione non presente'});
-        }
 
         let lat = 0;
         let lng = 0;
@@ -169,7 +164,7 @@ router.post('/api/Post', tokenChecker, async (req, res) => {
         if (isNaN(lat) || lat < -90 || lat > 90 || isNaN(lng) || lng < -180 || lng > 180) {
             return res.status(400).json({ error: 'Latitudine o longitudine non valide' });
         }
-
+    
 
         // Controllo dei campi obbligatori
         if (!descrizione || !luogo || !posizione || !data_creazione) {
@@ -205,6 +200,7 @@ router.post('/api/Post', tokenChecker, async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error', error: err.message });
     }
 });
+
 
 
 /**
@@ -247,10 +243,6 @@ router.delete('/api/Post/:id', tokenChecker, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Post not found' });
         }
 
-        // Verifica che l'utente sia il proprietario del post
-        console.log('Post utente_id:', post.utente_id);
-        console.log('Richiesta userId:', userId);
-
         if (post.utente_id.toString() !== userId.toString()) {
             return res.status(401).json({ success: false, message: 'You are not the owner of this post' });
         }
@@ -264,6 +256,7 @@ router.delete('/api/Post/:id', tokenChecker, async (req, res) => {
     }
 
 });
+
 
 
 /**
@@ -332,7 +325,7 @@ router.post('/api/Post/luogo', async (req, res) => {
 
 /**
  * @swagger
- * /api/Post/{post_id}:
+ * /api/OttieniPost/{post_id}:
  *   get:
  *     summary: Recupera un post per ID
  *     description: Recupera un post specifico utilizzando il suo identificatore univoco.
@@ -354,18 +347,21 @@ router.post('/api/Post/luogo', async (req, res) => {
  *       500:
  *         description: Errore del server
  */
-router.get('/api/Post/:post_id', async (req, res) => {
+router.get('/api/OttieniPost/:post_id', async (req, res) => {
     try {
-        const { _id } = req.params;
-        if (!_id) {
+        const { post_id } = req.params; 
+
+
+        // Verifica se l'ID del post è valido
+        if (!post_id) {
             return res.status(400).json({
                 success: false,
-                message: 'Post ID is required',
+                message: 'Post ID is required or invalid',
             });
         }
 
         // Recupera il post dal database
-        const post = await Post.findById(_id);
+        const post = await Post.findById(post_id);
 
         if (post) {
             res.status(200).json({
@@ -395,6 +391,7 @@ router.get('/api/Post/:post_id', async (req, res) => {
         });
     }
 });
+
 
 /**
  * @swagger
@@ -441,8 +438,8 @@ router.post('/api/post/ricerca', async (req, res) => {
             const dLat = (lat2 - lat1) * (Math.PI / 180);
             const dLon = (lon2 - lon1) * (Math.PI / 180);
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c; // Distanza in chilometri
         };
@@ -456,11 +453,11 @@ router.post('/api/post/ricerca', async (req, res) => {
         });
 
         if (PostNelRaggio.length === 0) {
-            return res.status(200).json([]);
+            return res.status(404).json({ error: 'Nessun post trovato nel raggio specificato' });
         }
 
         res.json(PostNelRaggio);
-    } catch (err) {
+    }catch (err) {
         res.status(500).json({ error: 'Errore nel recupero dei post', dettagli: err.message });
     }
 });

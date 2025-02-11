@@ -24,11 +24,11 @@ const SECRET = process.env.SECRET;
  *                 type: string
  *     responses:
  *       200:
- *         description: Authentication success with token
+ *         description: Autenticazione avvenuta con successo
  *       401:
- *         description: Authentication failed
+ *         description: Autenticazione fallita
  *       500:
- *         description: Server error
+ *         description: Errore del server
  */
 router.post('/api/v1/authentications', async (req, res) => {
     const { username, password } = req.body;
@@ -41,7 +41,7 @@ router.post('/api/v1/authentications', async (req, res) => {
                 const token = jwt.sign({ _id: user._id, ruolo: user.ruolo}, SECRET, { expiresIn: '1h' });
                 res.status(200).json({
                     success: true,
-                    message: 'Authentication success',
+                    message: 'Autenticazione avvenuta con successo',
                     token: token,
                     username: user.username,
                     id: user._id,
@@ -49,13 +49,19 @@ router.post('/api/v1/authentications', async (req, res) => {
                     ruolo: user.ruolo
                 });
             } else {
-                res.status(401).json({ success: false, message: 'Authentication failed' });
+                if (!user.verified) {
+                    res.status(401).json({ success: false, message: 'Autenticazione fallita, account non verificato' });
+                }
+                else
+                {
+                    res.status(401).json({ success: false, message: 'Autenticazione fallita' });
+                }
             }
         } else {
-            res.status(401).json({ success: false, message: 'Authentication failed' });
+            res.status(401).json({ success: false, message: 'Autenticazione fallita' });
         }
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Server error', error: err });
+        res.status(500).json({ success: false, message: 'Errore del server', error: err });
     }
 });
 

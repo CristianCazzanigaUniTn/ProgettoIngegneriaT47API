@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Event = require('../model/Evento'); // Assicurati che il percorso sia corretto
-const tokenChecker = require('../tokenChecker/TokenChecker')
+const tokenChecker = require('../src/TokenChecker')
 const Category = require('../model/Categoria');
+const User = require('../model/User');
 
 /**
  * @swagger
@@ -49,6 +50,8 @@ router.get('/api/eventi', async (req, res) => {
  *     responses:
  *       200:
  *         description: Evento trovato
+ *       400:
+ *         description: Evento ID richiesto
  *       404:
  *         description: Evento non trovato
  *       500:
@@ -56,6 +59,13 @@ router.get('/api/eventi', async (req, res) => {
  */
 router.get('/api/eventi/:id', async (req, res) => {
     try {
+        if (!req.params.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Evento ID richiesto',
+            });
+        }
+
         const evento = await Event.findById(req.params.id);
         if (!evento) return res.status(404).json({ error: 'Evento non trovato' });
         res.json(evento);
@@ -111,6 +121,8 @@ router.get('/api/eventi/:id', async (req, res) => {
  *         description: Non autenticato/Non autorizzato a creare un evento
  *       400:
  *         description: ID non valido o errore nei dati di input
+ *       404:
+ *         description: Categoria non trovata
  *       500:
  *         description: Errore nella creazione dell'evento
  */
@@ -120,6 +132,11 @@ router.post('/api/eventi', tokenChecker, async (req, res) => {
     } = req.body;
 
     try {
+
+
+        if(!nome || !descrizione || !data_inizio || !luogo || !posizione || !numero_massimo_partecipanti || !foto || !data_creazione || !id_categoria){
+            return res.status(400).json({ error: 'Tutti i campi sono richiesti' });
+        }
 
         if(!req.user)
             return res.status(403).json({ error: 'Utente non autenticato' });
@@ -150,15 +167,12 @@ router.post('/api/eventi', tokenChecker, async (req, res) => {
             return res.status(400).json({ error: 'Latitudine o longitudine non valide' });
         }
 
-        if (id_categoria && !mongoose.Types.ObjectId.isValid(id_categoria)) {
-            return res.status(400).json({ error: 'ID categoria non valido' });
-        }
-
         // Verifica che la categoria esista nel database
         if (id_categoria) {
-            const categoria = await Category.findById(id_categoria);
+            const categoria = await Category.findOne({_id:id_categoria});
             if (!categoria) {
-                return res.status(400).json({ error: 'Categoria non trovata' });
+
+                return res.status(404).json({ error: 'Categoria non trovata' });
             }
         }
 
@@ -293,24 +307,24 @@ router.post('/api/eventi/coordinate', async (req, res) => {
  *       200:
  *         description: Eventi trovati
  *       404:
- *         description: Eventi non trovati
+ *         description: Organizzatore non trovato
  */
 router.get('/api/eventi/organizzatore/:organizzatore_id', async (req, res) => {
 
     try {
         // Converti l'ID in ObjectId usando "new" per evitare il problema
         const organizzatoreId = new mongoose.Types.ObjectId(req.params.organizzatore_id);
-
-        // Cerca gli eventi associati a quell'organizzatore
-        const events = await Event.find({ Organizzatore: organizzatoreId });
-
-        if (events.length === 0) {
-            return res.status(404).json({ error: 'Nessun evento trovato' });
+        const organizzatore = await User.findOne({_id: organizzatoreId});
+        if (!organizzatore) {
+            return res.status(404).json({ error: 'Organizzatore non trovato' });
+        }else{
+            // Cerca gli eventi associati a quell'organizzatore
+            const events = await Event.find({ Organizzatore: organizzatoreId });
+            return res.status(200).json(events);       
         }
 
-        res.json(events);
     } catch (err) {
-        console.error(err);
+
         res.status(500).json({ error: 'Errore nel recupero degli eventi', dettagli: err.message });
     }
 });
