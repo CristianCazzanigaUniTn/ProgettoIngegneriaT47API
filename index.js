@@ -78,13 +78,17 @@ app.use(cloudFotoRoutes);
 app.use(emailRoutes);
 app.use(categoryRoutes);
 
-mongoose.connect(DB)
-    .then(() => {
-        console.log('Connected to MongoDB');
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(DB)
+        .then(() => {
+            console.log('Connected to MongoDB');
+            const PORT = process.env.PORT || 3000; 
+    
         app.listen(PORT, () => {
             console.log(`Example app listening at http://localhost:${PORT}`);
         });
-    })
-    .catch((err) => {
-        console.log('Failed to connect to MongoDB', err);
+        })
+        .catch((err) => {
+            console.log('Failed to connect to MongoDB', err);
     });
+    }
