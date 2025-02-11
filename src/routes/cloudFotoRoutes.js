@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cloudinary = require('cloudinary').v2;
-const tokenChecker = require('../src/TokenChecker'); // Verifica il token JWT
+const tokenChecker = require('../tokenChecker/TokenChecker'); // Verifica il token JWT
 
 // Configurazione di Cloudinary
 cloudinary.config({

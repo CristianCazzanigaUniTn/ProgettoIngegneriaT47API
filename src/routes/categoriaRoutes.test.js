@@ -1,7 +1,7 @@
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const request = require('supertest');
-const app = require('../index'); // Il tuo server Express
+const app = require('../../index'); 
 const Categoria = require('../model/Categoria');
 
 let mongoServer;

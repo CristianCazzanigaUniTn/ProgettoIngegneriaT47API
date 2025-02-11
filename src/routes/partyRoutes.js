@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Party = require('../model/Party'); // Assicurati che il percorso sia corretto
 const Category = require('../model/Categoria');
 const User = require('../model/User');
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 
 
 /**

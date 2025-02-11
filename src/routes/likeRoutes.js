@@ -3,7 +3,7 @@ const express = require('express');
 const Post = require('../model/Post');
 const Like = require('../model/Like');
 const Commento = require('../model/Commento'); 
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const router = express.Router();
 /**
  * @swagger

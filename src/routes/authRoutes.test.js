@@ -2,7 +2,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const request = require('supertest');
-const app = require('../index'); // Il tuo server Express
+const app = require('../../index'); 
 const User = require('../model/User'); // Modello User
 
 let mongoServer;

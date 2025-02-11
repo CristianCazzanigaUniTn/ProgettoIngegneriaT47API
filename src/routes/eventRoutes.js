@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Event = require('../model/Evento'); // Assicurati che il percorso sia corretto
-const tokenChecker = require('../src/TokenChecker')
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const Category = require('../model/Categoria');
 const User = require('../model/User');
 

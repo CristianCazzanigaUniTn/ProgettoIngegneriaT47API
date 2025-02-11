@@ -1,7 +1,7 @@
 const express = require('express');
 const User = require('../model/User');
 const Post = require('../model/Post'); // Modello post
-const tokenChecker = require('../src/TokenChecker');
+const tokenChecker = require('../tokenChecker/TokenChecker');
 const router = express.Router();
 
 
