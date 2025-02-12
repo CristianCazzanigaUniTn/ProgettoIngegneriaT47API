@@ -1,19 +1,24 @@
-{
+"swaggerDoc": {
   "openapi": "3.0.0",
   "info": {
     "title": "API Documentation",
     "version": "1.0.0",
-    "description": "Documentazione API generata automaticamente con swagger-jsdoc.",
-    "license": {
-      "name": "MIT"
-    }
+    "description": "A simple Express API application for user authentication"
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api",
-      "description": "Localhost server"
+      "url": "https://eventlyapi.onrender.com"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "paths": {
     "/api/v1/authentications": {
       "post": {
@@ -39,13 +44,13 @@
         },
         "responses": {
           "200": {
-            "description": "Authentication success with token"
+            "description": "Autenticazione avvenuta con successo"
           },
           "401": {
-            "description": "Authentication failed"
+            "description": "Autenticazione fallita"
           },
           "500": {
-            "description": "Server error"
+            "description": "Errore del server"
           }
         }
       }
@@ -361,34 +366,6 @@
           },
           "404": {
             "description": "Utente o post non trovati"
-          },
-          "500": {
-            "description": "Errore del server"
-          }
-        }
-      }
-    },
-    "/api/Utenti/verifica": {
-      "patch": {
-        "summary": "Verifica l'account dell'utente",
-        "description": "Verifica l'account dell'utente.",
-        "tags": [
-          "Utenti"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nome utente aggiornato con successo"
-          },
-          "400": {
-            "description": "ID o nome utente non valido"
-          },
-          "404": {
-            "description": "Utente non trovato"
           },
           "500": {
             "description": "Errore del server"
@@ -844,6 +821,9 @@
           "201": {
             "description": "Partecipazione accettata"
           },
+          "404": {
+            "description": "Utente/Evento non trovato"
+          },
           "408": {
             "description": "Numero massimo di partecipanti raggiunto"
           },
@@ -914,6 +894,9 @@
         "responses": {
           "201": {
             "description": "Partecipazione accettata"
+          },
+          "404": {
+            "description": "Utente/Party non trovato"
           },
           "408": {
             "description": "Numero massimo di partecipanti raggiunto"
@@ -1044,6 +1027,9 @@
           "403": {
             "description": "Non autenticato/Non autorizzato a creare un evento"
           },
+          "404": {
+            "description": "Categoria non trovata"
+          },
           "500": {
             "description": "Errore nella creazione dell'evento"
           }
@@ -1070,6 +1056,9 @@
         "responses": {
           "200": {
             "description": "Evento trovato"
+          },
+          "400": {
+            "description": "Evento ID richiesto"
           },
           "404": {
             "description": "Evento non trovato"
@@ -1178,7 +1167,7 @@
             "description": "Eventi trovati"
           },
           "404": {
-            "description": "Eventi non trovati"
+            "description": "Organizzatore non trovato"
           }
         }
       }
@@ -1334,6 +1323,9 @@
           "403": {
             "description": "Non autenticato/Non autorizzato a creare un party"
           },
+          "404": {
+            "description": "Categoria non trovata"
+          },
           "500": {
             "description": "Errore nella creazione del party"
           }
@@ -1360,6 +1352,9 @@
         "responses": {
           "200": {
             "description": "Party trovato"
+          },
+          "400": {
+            "description": "Party ID richiesto"
           },
           "404": {
             "description": "Party non trovato"
@@ -1462,7 +1457,7 @@
             "description": "Party trovati"
           },
           "404": {
-            "description": "Party non trovati"
+            "description": "Utente non trovato"
           }
         }
       }
@@ -1531,8 +1526,8 @@
           "400": {
             "description": "Parametri non validi"
           },
-          "404": {
-            "description": "Nessun party trovato nel raggio specificato"
+          "500": {
+            "description": "Errore del server"
           }
         }
       }
@@ -1575,6 +1570,9 @@
           },
           "403": {
             "description": "Non autenticato/Non autorizzato a creare una Faq"
+          },
+          "404": {
+            "description": "Evento non trovato"
           },
           "500": {
             "description": "Errore nella creazione della faq"
@@ -1688,7 +1686,7 @@
             "description": "Faq trovate"
           },
           "404": {
-            "description": "Faq non trovate"
+            "description": "Evento non trovato"
           }
         }
       }
@@ -1888,7 +1886,7 @@
         }
       }
     },
-    "/api/Post/{post_id}": {
+    "/api/OttieniPost/{post_id}": {
       "get": {
         "summary": "Recupera un post per ID",
         "description": "Recupera un post specifico utilizzando il suo identificatore univoco.",
@@ -2002,6 +2000,9 @@
         "responses": {
           "200": {
             "description": "URL sicuro generato con successo"
+          },
+          "403": {
+            "description": "Solo utente_base può accedere a questo endpoint"
           }
         },
         "security": [
@@ -2042,6 +2043,9 @@
         "responses": {
           "200": {
             "description": "URL sicuro generato con successo"
+          },
+          "403": {
+            "description": "Solo utente_base può accedere a questo endpoint"
           }
         },
         "security": [
@@ -2110,6 +2114,42 @@
             }
           }
         ]
+      }
+    },
+    "/generate-signed-url-foto-profilo": {
+      "post": {
+        "summary": "Genera un URL sicuro per il caricamento di foto profilo su Cloudinary",
+        "tags": [
+          "CloudFoto"
+        ],
+        "description": "Questo endpoint fornisce un URL sicuro (con firma) che può essere utilizzato per caricare una foto profilo su Cloudinary.",
+        "responses": {
+          "200": {
+            "description": "URL sicuro generato con successo"
+          }
+        },
+        "security": [],
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "signature": {
+                  "type": "string",
+                  "description": "La signature da usare per l'upload"
+                },
+                "timestamp": {
+                  "type": "integer",
+                  "description": "Il timestamp in secondi"
+                },
+                "upload_preset": {
+                  "type": "string",
+                  "description": "Il preset di upload configurato su Cloudinary"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/send-email": {
@@ -2312,7 +2352,6 @@
       }
     }
   },
-  "components": {},
   "tags": [
     {
       "name": "Eventi",

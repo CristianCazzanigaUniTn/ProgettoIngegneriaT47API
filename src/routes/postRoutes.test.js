@@ -337,7 +337,7 @@ describe('POST API Tests', () => {
         expect(res.body).toHaveProperty('success', false);
     });
 
-    test('Eliminazione di un post tramite un id valido e il token non del suo creatore', async () => {
+    test('Eliminazione di un post tramite un id valido e il token di un utente non base', async () => {
         const res = await request(app)
             .delete(`/api/Post/${postId}`)  // ID del post creato
             .set('Authorization', `Bearer ${organizerToken}`)  // Token di un altro utente (non il creatore)

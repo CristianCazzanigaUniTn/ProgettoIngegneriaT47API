@@ -80,9 +80,9 @@ describe('LIKE API Tests', () => {
 
 
 
-    // ---------------------- Sezione test estrazione like ------------------------------------------------------//
+    // ---------------------- Sezione test estrazione commenti ------------------------------------------------------//
 
-    // ---------------------- Sezione test estrazione like positiva ------------------------------------------------------//
+    // ---------------------- Sezione test estrazione commenti positiva ------------------------------------------------------//
     test('Estrazione dei commenti tramite id corretto di un post', async () => {
         const res = await request(app)
             .get(`/api/commenti/post/${postId}`)
@@ -91,18 +91,18 @@ describe('LIKE API Tests', () => {
 
         expect(res.body).toBeDefined();
     });
-// ---------------------- Sezione test estrazione like negativa ------------------------------------------------------//
+// ---------------------- Sezione test estrazione commenti negativa ------------------------------------------------------//
     
     test('Estrazione dei commenti tramite id mancante', async () => {
         const res = await request(app)
-            .get(`/api/commenti/post/`)  // Usa l'ID del post creato
+            .get(`/api/commenti/post/`)  
             .expect(404)
         expect(res.body).toBeDefined();
     });
     
     test('Estrazione dei commenti tramite id non valido', async () => {
         const res = await request(app)
-            .get(`/api/commenti/post/6736020b2b45400acaf456b3`)  // Usa l'ID del post creato
+            .get(`/api/commenti/post/6736020b2b45400acaf456b3`)  
             .expect(404)
             .expect('Content-Type', /json/);
         expect(res.body).toBeDefined();

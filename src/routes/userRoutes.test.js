@@ -107,7 +107,7 @@ describe('POST API Tests', () => {
 
 
 
-    // ---------------------- Sezione test creazione post ------------------------------------------------------//
+    // ---------------------- Sezione test creazione utente ------------------------------------------------------//
 
     // ---------------------- Sezione test creazione positiva ------------------------------------------------------//  
     test('Creazione di un account in modo corretto con tutti i campi richiesti.', async () => {
